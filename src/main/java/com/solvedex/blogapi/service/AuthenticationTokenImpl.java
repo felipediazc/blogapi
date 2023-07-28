@@ -2,6 +2,7 @@ package com.solvedex.blogapi.service;
 
 import com.solvedex.blogapi.db.entity.BlogUser;
 import com.solvedex.blogapi.db.repository.BlogUserRepository;
+import com.solvedex.blogapi.dto.TokenDataDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,15 +23,14 @@ import java.util.stream.Collectors;
 public class AuthenticationTokenImpl implements AuthenticationToken {
 
 
-    public static final String TOKEN_PREFIX = "Bearer ";
-
+    public static final String USER_ID = "userId";
     @Value("${jwt.secret}")
     private String JWT_SECRET;
 
     @Value("${jwt.expiration_in_seconds}")
     private Integer JWT_EXPIRATION;
 
-    private final String DEFAULT_USER_ROLE = "GUEST";
+    private static final String DEFAULT_USER_ROLE = "GUEST";
     private final BlogUserRepository blogUserRepository;
 
     public AuthenticationTokenImpl(BlogUserRepository blogUserRepository) {
@@ -53,7 +53,7 @@ public class AuthenticationTokenImpl implements AuthenticationToken {
                                 .collect(Collectors.toList()))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (getTokenExpiration() * 1000)))
-                .claim("userId", userId)
+                .claim(USER_ID, userId)
                 .claim("role", DEFAULT_USER_ROLE)
                 .signWith(SignatureAlgorithm.HS512,
                         getTokenSecret()).compact();
@@ -67,8 +67,8 @@ public class AuthenticationTokenImpl implements AuthenticationToken {
                     .getBody();
             String username = claims.getSubject();
             String userId = null;
-            if (claims.get("userId") != null) {
-                userId = claims.get("userId").toString();
+            if (claims.get(USER_ID) != null) {
+                userId = claims.get(USER_ID).toString();
             }
             String role = (String) claims.get("role");
             log.info("Token data is: username -> {},  userId -> {} roles -> {}", username, userId, role);
@@ -81,6 +81,29 @@ public class AuthenticationTokenImpl implements AuthenticationToken {
             }
         }
         return false;
+    }
+
+    @Override
+    public TokenDataDto getTokenData(String token) {
+        if (token != null) {
+            Claims claims = Jwts.parser().setSigningKey(getTokenSecret())
+                    .parseClaimsJws(token)
+                    .getBody();
+            String username = claims.getSubject();
+            String userId = null;
+            if (claims.get(USER_ID) != null) {
+                userId = claims.get(USER_ID).toString();
+            }
+            String role = (String) claims.get("role");
+            if (username != null && userId != null) {
+                TokenDataDto tokenDataDto = new TokenDataDto();
+                tokenDataDto.setRole(role);
+                tokenDataDto.setUsername(username);
+                tokenDataDto.setUserId(Integer.parseInt(userId));
+                return tokenDataDto;
+            }
+        }
+        return null;
     }
 
     @Override

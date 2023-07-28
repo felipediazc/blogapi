@@ -48,6 +48,8 @@ public class UserServiceImpl implements UserService {
                 signInResponseDto.setUsername(username);
                 String token = authenticationToken.createToken(username, blogUser.getId());
                 signInResponseDto.setJwtToken(token);
+                blogUser.setJwttoken(token);
+                blogUserRepository.save(blogUser);
                 return signInResponseDto;
             }
         }

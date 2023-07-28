@@ -43,7 +43,7 @@ Or
 
 ### SWAGGER UI
 
-http://localhost:7070/Jhanu/swagger-ui/index.html?url=http://localhost:8080/Jhanu/jhanu_default_endpoints.yml 
+http://localhost:8080/swagger-ui/index.html
 
 ### CODE COVERAGE
 

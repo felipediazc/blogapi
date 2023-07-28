@@ -1,20 +1,13 @@
 package com.solvedex.blogapi.exception;
 
-public class UserExistException extends Exception {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+public class UserExistException extends RuntimeException {
 
     public UserExistException() {
         super();
     }
 
-    public UserExistException(String message) {
-        super(message);
-    }
-
-    public UserExistException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UserExistException(Throwable cause) {
-        super(cause);
-    }
 }

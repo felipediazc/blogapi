@@ -2,6 +2,7 @@ package com.solvedex.blogapi.services;
 
 import com.solvedex.blogapi.db.entity.BlogUser;
 import com.solvedex.blogapi.db.repository.BlogUserRepository;
+import com.solvedex.blogapi.dto.TokenDataDto;
 import com.solvedex.blogapi.init.TestSetup;
 import com.solvedex.blogapi.service.AuthenticationToken;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,7 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-public class AuthenticationTokenTest extends TestSetup {
+class AuthenticationTokenTest extends TestSetup {
 
 
     @Autowired
@@ -37,9 +38,7 @@ public class AuthenticationTokenTest extends TestSetup {
     @SneakyThrows
     @Test
     void tokenTest1() {
-        assertThrows(ExpiredJwtException.class, () -> {
-            authenticationToken.isValidToken(expiredToken);
-        });
+        assertThrows(ExpiredJwtException.class, () -> authenticationToken.isValidToken(expiredToken));
     }
 
     @DisplayName("#2 Test null token")
@@ -77,5 +76,10 @@ public class AuthenticationTokenTest extends TestSetup {
             blogUserRepository.save(blogUser);
         }
         assertTrue(authenticationToken.isValidToken(token));
+        assertNull(authenticationToken.getTokenData(null));
+        TokenDataDto tokenDataDto = authenticationToken.getTokenData(token);
+        assertEquals(1, tokenDataDto.getUserId());
+        assertEquals("test", tokenDataDto.getUsername());
+        assertEquals("GUEST", tokenDataDto.getRole());
     }
 }

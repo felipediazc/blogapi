@@ -1,20 +1,13 @@
 package com.solvedex.blogapi.exception;
 
-public class DataDoesntExistException extends Exception {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+public class DataDoesntExistException extends RuntimeException {
 
     public DataDoesntExistException() {
         super();
     }
 
-    public DataDoesntExistException(String message) {
-        super(message);
-    }
-
-    public DataDoesntExistException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public DataDoesntExistException(Throwable cause) {
-        super(cause);
-    }
 }
