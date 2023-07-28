@@ -108,6 +108,8 @@
                         <exclude>com/solvedex/blogapi/repository/dto/*</exclude>
                         <exclude>com/solvedex/blogapi/exception/*</exclude>
                         <exclude>com/solvedex/blogapi/dto/*</exclude>
+                        <exclude>com/solvedex/blogapi/init/*</exclude>
+                        <exclude>com/solvedex/blogapi/security/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

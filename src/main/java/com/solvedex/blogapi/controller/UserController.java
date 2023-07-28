@@ -1,8 +1,10 @@
 package com.solvedex.blogapi.controller;
 
+import com.solvedex.blogapi.db.entity.BlogUser;
 import com.solvedex.blogapi.dto.SignInResponseDto;
 import com.solvedex.blogapi.exception.AuthenticationException;
 import com.solvedex.blogapi.exception.ExceptionResponse;
+import com.solvedex.blogapi.exception.UserExistException;
 import com.solvedex.blogapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,6 +35,20 @@ public class UserController {
                                     @Parameter(description = "user's password") @RequestParam(name = "password") String password) throws AuthenticationException {
 
         return userService.signIn(username, password);
+    }
+
+    @PostMapping(value = {"/signup"})
+    @Operation(summary = "Creates a new User")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successfully operation"),
+            @ApiResponse(responseCode = "500", description = "User already exist", content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+    })
+    public BlogUser signUp(
+            @Parameter(description = "User real name and lastname") @RequestParam(name = "name") String name,
+            @Parameter(description = "username for authentication") @RequestParam(name = "username") String username,
+            @Parameter(description = "user's password") @RequestParam(name = "password") String password) throws UserExistException {
+
+        return userService.signUp(name, username, password);
     }
 
 }
