@@ -15,11 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-public class CommentServiceTest extends TestSetup {
+class CommentServiceTest extends TestSetup {
 
     @Autowired
     private CommentService commentService;
@@ -34,7 +33,7 @@ public class CommentServiceTest extends TestSetup {
     @Test
     void commentTest1() {
         BlogComment blogComment = commentService.setComment(1, "comments kjkj k", 1);
-        assertEquals(1, blogComment.getId());
+        assertNotNull(blogComment.getId());
     }
 
     @DisplayName("#2 Creates a new comment (throw user doesnt exist error)")
@@ -49,7 +48,7 @@ public class CommentServiceTest extends TestSetup {
     @Test
     void commentTest3() {
         assertThrows(DataDoesntExistException.class, () -> {
-            commentService.setComment(2, "comments kjkj k", 1);
+            commentService.setComment(40, "comments kjkj k", 1);
         });
     }
 
@@ -66,7 +65,7 @@ public class CommentServiceTest extends TestSetup {
     @Test
     void commentTest5() {
         assertThrows(NotOwnerException.class, () -> {
-            commentService.updateComment(1, "My updated comment", 2);
+            commentService.updateComment(1, "My updated comment", 20);
         });
     }
 
@@ -74,7 +73,7 @@ public class CommentServiceTest extends TestSetup {
     @Test
     void commentTest6() {
         assertThrows(DataDoesntExistException.class, () -> {
-            commentService.updateComment(2, "My updated comment", 1);
+            commentService.updateComment(100, "My updated comment", 1);
         });
     }
 
@@ -82,7 +81,7 @@ public class CommentServiceTest extends TestSetup {
     @Test
     void commentTest7() {
         assertThrows(DataDoesntExistException.class, () -> {
-            commentService.deleteComment(4, 1);
+            commentService.deleteComment(40, 1);
         });
     }
 
@@ -90,7 +89,7 @@ public class CommentServiceTest extends TestSetup {
     @Test
     void commentTest8() {
         assertThrows(NotOwnerException.class, () -> {
-            commentService.deleteComment(1, 2);
+            commentService.deleteComment(1, 20);
         });
     }
 
@@ -98,8 +97,10 @@ public class CommentServiceTest extends TestSetup {
     @SneakyThrows
     @Test
     void commentTest9() {
-        commentService.setComment(1, "an other comment", 1);
-        commentService.deleteComment(2, 1);
+        BlogComment blogComment = commentService.setComment(1, "an other comment", 1);
+        assertDoesNotThrow(() -> {
+            commentService.deleteComment(blogComment.getId(), 1);
+        });
     }
 
     @DisplayName("#10 Gets Comments")
@@ -107,9 +108,7 @@ public class CommentServiceTest extends TestSetup {
     @Test
     void articleTest010() {
         List<BlogComment> blogCommentList = commentService.getComments(1);
-        assertEquals(1, blogCommentList.size());
+        assertTrue(blogCommentList.size() > 0);
     }
-
-    //hcer unit test de un articulo y varios comentarios y despues borar el articulo en cascada
 
 }

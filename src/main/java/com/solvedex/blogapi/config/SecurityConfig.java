@@ -14,6 +14,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 @Configuration
 public class SecurityConfig {
 
@@ -45,13 +47,17 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/signin")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/signup")).permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/blog")).permitAll()
-                        .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/comment/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/blog")).permitAll()
+                        .requestMatchers(antMatcher(HttpMethod.GET, "/comment/**")).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(accessDeniedHandler())
-                        .authenticationEntryPoint(new BlogAuthenticationEntryPoint()));
+                        .authenticationEntryPoint(new BlogAuthenticationEntryPoint()))
+                .headers(header -> header
+                        .frameOptions(frameOptionsConfig -> frameOptionsConfig.disable())
+                );
         return http.build();
     }
 

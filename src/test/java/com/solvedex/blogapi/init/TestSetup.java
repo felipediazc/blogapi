@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -23,6 +24,9 @@ public class TestSetup {
 
     @Autowired
     DataSource dataSource;
+
+    @Autowired
+    public MockMvc mockMvc;
 
     private static Boolean dbInitialized = false;
 

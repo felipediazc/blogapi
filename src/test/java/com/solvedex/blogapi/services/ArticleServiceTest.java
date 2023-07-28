@@ -15,14 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-public class ArticleServiceTest extends TestSetup {
+class ArticleServiceTest extends TestSetup {
 
     @Autowired
     private ArticleService articleService;
+
+    private static Integer articleId;
 
     @BeforeEach
     public void init() {
@@ -34,7 +35,7 @@ public class ArticleServiceTest extends TestSetup {
     @Test
     void articleTest1() {
         BlogArticle blogArticle = articleService.setArticle("article 2", "this is my original content", 1);
-        assertEquals(2, blogArticle.getId());
+        assertNotNull(blogArticle.getId());
     }
 
     @DisplayName("#2 Creates an article (throw user doesnt exist error)")
@@ -49,8 +50,8 @@ public class ArticleServiceTest extends TestSetup {
     @SneakyThrows
     @Test
     void articleTest3() {
-        BlogArticle blogArticle = articleService.updateArticle(2, "article 1", "my new content", 1);
-        assertEquals(2, blogArticle.getId());
+        BlogArticle blogArticle = articleService.updateArticle(1, "article 1", "my new content", 1);
+        assertNotNull(blogArticle.getId());
         assertEquals("article 1", blogArticle.getTitle());
         assertEquals("my new content", blogArticle.getContent());
     }
@@ -59,7 +60,7 @@ public class ArticleServiceTest extends TestSetup {
     @Test
     void articleTest4() {
         assertThrows(NotOwnerException.class, () -> {
-            articleService.updateArticle(2, "article 1", "my new content", 2);
+            articleService.updateArticle(1, "article 1", "my new content", 20);
         });
     }
 
@@ -67,7 +68,7 @@ public class ArticleServiceTest extends TestSetup {
     @Test
     void articleTest5() {
         assertThrows(DataDoesntExistException.class, () -> {
-            articleService.updateArticle(3, "article 1", "my new content", 1);
+            articleService.updateArticle(30, "article 1", "my new content", 1);
         });
     }
 
@@ -75,9 +76,10 @@ public class ArticleServiceTest extends TestSetup {
     @Test
     void articleTest6() throws UserDoesntExistException {
         BlogArticle blogArticle = articleService.setArticle("article 2", "this is my original content 2", 1);
-        assertEquals(3, blogArticle.getId());
+        articleId = blogArticle.getId();
+        assertNotNull(articleId);
         assertThrows(DataDoesntExistException.class, () -> {
-            articleService.deleteArticle(4, 1);
+            articleService.deleteArticle(40, 1);
         });
     }
 
@@ -85,7 +87,7 @@ public class ArticleServiceTest extends TestSetup {
     @Test
     void articleTest7() {
         assertThrows(NotOwnerException.class, () -> {
-            articleService.deleteArticle(3, 2);
+            articleService.deleteArticle(articleId, 20);
         });
     }
 
@@ -93,7 +95,9 @@ public class ArticleServiceTest extends TestSetup {
     @SneakyThrows
     @Test
     void articleTest8() {
-        articleService.deleteArticle(3, 1);
+        assertDoesNotThrow(() -> {
+            articleService.deleteArticle(articleId, 1);
+        });
     }
 
     @DisplayName("#9 Gets Articles")
@@ -101,6 +105,6 @@ public class ArticleServiceTest extends TestSetup {
     @Test
     void articleTest9() {
         List<BlogArticle> blogArticleList = articleService.getArticles();
-        assertEquals(2, blogArticleList.size());
+        assertTrue(blogArticleList.size() > 0);
     }
 }

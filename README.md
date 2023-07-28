@@ -41,11 +41,29 @@ Or
 
     java -jar target/blogapi-0.0.1-SNAPSHOT.jar
 
-### SWAGGER UI
+### DOCUMENTATION -> SWAGGER UI
+
+Please enter to this URL, you will find all endpoints 
 
 http://localhost:8080/swagger-ui/index.html
+
+Each one, has the required documentation to use it, keep in mind:
+
+1. Most of the services requires the authentication token. Then, you need to use the signIn endpoint in order to get authenticated.  Copy the authentication token and use it in the endpoints you need
+2. There are default data for using this project, the following users and passwords are available:
+
+username/password
+
+    test1/test1
+    test2/test2
+    test3/test3
 
 ### CODE COVERAGE
 
 Please look into the target/site/jacoco folder for de index.html file
+
+### H2 CONSOLE
+
+http://localhost:8080/h2-console/
+
 
